@@ -1,0 +1,113 @@
+<html>
+<head><title>Download From Dwatchseries.to</title>
+
+<meta charset='utf-8'>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.loader {
+	position: fixed;
+	left: 48%;
+	top: 48%;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+
+	border: 16px solid #f3f3f3;
+	border-radius: 50%;
+	border-top: 16px solid #3498db;
+	width: 120px;
+	height: 120px;
+	-webkit-animation: spin 2s linear infinite; /* Safari */
+	animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+</style>
+</head>
+<body>
+	<div class='container'>
+		<form action="" method="POST">
+			<div class='row'>
+				<input type="text" name="link" placeholder="<-Link Goes Here->Example:https://www1.swatchseries.to/friends/season-6" id="linkfield" class='col-sm-9'>
+				<button type="submit" class="btn btn-primary col-sm-2 ml-4" id='submit'>Grab Links</button>
+			</div>
+		</form>
+	<div class="loader"></div>
+	{% if to_html %}
+    <table class='table'>
+        <tr>
+            <th>File Name</th>
+            <th>Download Link</th>
+        </tr>
+        {% for row in to_html %}
+		<tr>
+            <td>{{row.file_name}}</td>
+            <td><a href= "{{row.download_link}}" class='btn btn-success' download="{{row.file_name}}">Download</a></td>
+		</tr>
+        {% endfor %}
+    </table>
+	{% endif %}
+	</div>
+<script>
+$(document).ready(function(){
+	$('.loader').hide();
+	$('#submit').click(function(event){
+		event.preventDefault();
+		var linkfield = $("#linkfield").val();
+		if (linkfield == ""){
+			alert('Link Field is empty');
+			$("#linkfield").focus();
+		}
+		else{
+			$("table").remove();
+			$('.loader').show();
+			$.post('/download', {"link": linkfield}, 
+			function(data,status){
+				var table = $("table", data);
+				$(".container").append(table);
+				$('.loader').hide();
+			});
+		}
+		
+	});
+});
+</script>	
+</body>
+</html>
