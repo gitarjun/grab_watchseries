@@ -1,11 +1,16 @@
-from urllib2 import Request
-from urllib2 import urlopen
 from lxml import etree
 import requests
 from unidecode import unidecode
 import re
 from collections import OrderedDict
+import sys
 
+if sys.version_info>=(3,0):
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+else:
+    from urllib2 import Request
+    from urllib2 import urlopen
 
 class LinkGrab:
     def __init__(self):
@@ -24,10 +29,17 @@ class LinkGrab:
         self.season_header = '//*[@itemprop="season"]'
 
     def _get_response(self, link):
-        req = Request(link, headers=self.hdr)
-        html = urlopen(req).read()
-        x = etree.HTML(html)
-        return html,x
+        if sys.version_info>=(3,0):
+            http = urllib3.PoolManager()
+            response = http.request('GET', link, headers=self.hdr)
+            html = response.data.decode()
+            x = etree.HTML(html)
+            return html,x
+        else:    
+            req = Request(link, headers=self.hdr)
+            html = urlopen(req).read()
+            x = etree.HTML(html)
+            return html,x
 
     def getlinks(self,link):
         self.link = link
