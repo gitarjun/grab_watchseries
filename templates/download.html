@@ -98,11 +98,15 @@ $(document).ready(function(){
 		else{
 			$("table").remove();
 			$('.loader').show();
+			$('#linkfield').prop('disabled', true);
+			$('#submit').prop('disabled', true);
 			$.post('/download', {"link": linkfield}, 
 			function(data,status){
 				var table = $("table", data);
 				$(".container").append(table);
 				$('.loader').hide();
+				$('#linkfield').prop('disabled', false);
+				$('#submit').prop('disabled', false);
 			});
 		}
 		
